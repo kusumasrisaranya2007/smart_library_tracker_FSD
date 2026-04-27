@@ -1,0 +1,6 @@
+{
+  "name": "Smart Library Tracker",
+  "description": "A retro-futurist glitch-art inspired smart library management system using vanilla JS and LocalStorage.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

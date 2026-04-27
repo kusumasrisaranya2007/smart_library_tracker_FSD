@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Library Tracker | GLITCH_OS</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="light-mode">
+    <!-- Loader / Splash Screen -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="brand-container">
+            <div class="brand-logo">
+                <i class="fas fa-book"></i>
+            </div>
+            <h1 class="brand-text">SmartLib</h1>
+            <p class="brand-subtext">Manage Books Smarter, Faster, Better</p>
+            <button id="start-btn" class="cyber-button">Launch System</button>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="main-app" class="app-container hidden">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-book-open logo-icon"></i>
+                <span class="logo-text">SmartLib</span>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-section="dashboard"><a href="#"><i class="fas fa-layer-group"></i> <span>Dashboard</span></a></li>
+                <li data-section="books"><a href="#"><i class="fas fa-book-bookmark"></i> <span>Books</span></a></li>
+                <li data-section="borrowers"><a href="#"><i class="fas fa-user-group"></i> <span>Borrowers</span></a></li>
+                <li data-section="transactions"><a href="#"><i class="fas fa-repeat"></i> <span>Transactions</span></a></li>
+                <li data-section="categories"><a href="#"><i class="fas fa-tags"></i> <span>Taxonomy</span></a></li>
+                <li data-section="fines"><a href="#"><i class="fas fa-receipt"></i> <span>Fines</span></a></li>
+                <li data-section="reports"><a href="#"><i class="fas fa-chart-line"></i> <span>Audit</span></a></li>
+                <li data-section="settings"><a href="#"><i class="fas fa-sliders"></i> <span>Config</span></a></li>
+            </ul>
+            <div class="sidebar-footer">
+                <div class="admin-card">
+                    <p class="label">System Lead</p>
+                    <p class="name">Kusuma Sri Saranya</p>
+                    <p class="plan">Premium Manager</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="search-container">
+                <i class="fas fa-magnifying-glass"></i>
+                <input type="text" id="global-search" placeholder="Search for books, authors... (Ctrl + K)">
+            </div>
+            <div class="top-actions">
+                <div class="clock-display">
+                    <div id="digital-clock">10:24 AM</div>
+                    <div class="date" id="current-date">MONDAY, OCT 23</div>
+                </div>
+                <div class="profile">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" alt="Admin" class="avatar">
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="content-area">
+            <!-- Sections -->
+            
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <p class="label">Total Units</p>
+                            <h3 id="stat-total-books">0</h3>
+                        </div>
+                        <div class="progress-bar-sm"><div class="progress-fill bg-blue" style="width: 100%"></div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <p class="label">Available</p>
+                            <h3 id="stat-available-books">0</h3>
+                        </div>
+                        <div class="progress-bar-sm"><div class="progress-fill bg-emerald" id="stat-available-progress"></div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <p class="label">Borrowed</p>
+                            <h3 id="stat-borrowed-books">0</h3>
+                        </div>
+                        <div class="progress-bar-sm"><div class="progress-fill bg-indigo" id="stat-borrowed-progress"></div></div>
+                    </div>
+                    <div class="stat-card overdue" id="overdue-card">
+                        <div class="stat-info">
+                            <p class="label">Overdue Alerts</p>
+                            <h3 id="stat-overdue-books">0</h3>
+                        </div>
+                        <div class="progress-bar-sm"><div class="progress-fill bg-red" id="stat-overdue-progress"></div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <p class="label">Member Entities</p>
+                            <h3 id="stat-borrowers-count">0</h3>
+                        </div>
+                        <div class="progress-bar-sm"><div class="progress-fill bg-orange" id="stat-borrowers-progress"></div></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <p class="label">Outstanding Fines</p>
+                            <h3 id="stat-fine-amount">0.00</h3>
+                        </div>
+                        <div class="progress-bar-sm"><div class="progress-fill bg-purple" id="stat-fines-progress"></div></div>
+                    </div>
+                </div>
+
+                <div class="dashboard-charts">
+                    <div class="glass">
+                        <h4>Lending Activity Overview</h4>
+                        <canvas id="activityChart"></canvas>
+                    </div>
+                    <div class="activity-feed glass">
+                        <h4>Recent Pulses</h4>
+                        <ul id="recent-activity">
+                            <!-- Populated by JS -->
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="quick-actions-container">
+                    <h3>Quick Management</h3>
+                    <div class="quick-actions">
+                        <button class="primary" onclick="app.showSection('books'); app.openModal('book-modal')"><i class="fas fa-plus"></i> New Book</button>
+                        <button onclick="app.showSection('transactions')"><i class="fas fa-share-from-square"></i> Issue Transaction</button>
+                        <button id="export-csv-btn"><i class="fas fa-download"></i> Export Data</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Books Section -->
+            <section id="books" class="content-section">
+                <div class="section-header">
+                    <h2>Book Inventory</h2>
+                    <button class="cyber-button" onclick="app.openModal('book-modal')"><i class="fas fa-plus"></i> New Book</button>
+                </div>
+                <div class="filters glass">
+                    <input type="text" id="book-search" placeholder="Search by title, author, or ISBN...">
+                    <select id="book-category-filter">
+                        <option value="all">All Categories</option>
+                    </select>
+                </div>
+                <div class="table-container glass">
+                    <table id="books-table">
+                        <thead>
+                            <tr>
+                                <th>Cover</th>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Category</th>
+                                <th>Qty</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="books-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Borrowers Section -->
+            <section id="borrowers" class="content-section">
+                <div class="section-header">
+                    <h2>Member Database</h2>
+                    <button class="cyber-button" onclick="app.openModal('borrower-modal')"><i class="fas fa-user-plus"></i> New Member</button>
+                </div>
+                <div class="filters glass">
+                    <input type="text" id="borrower-search" placeholder="Search by name, email, or ID...">
+                </div>
+                <div class="table-container glass">
+                    <table id="borrowers-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>History</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="borrowers-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Transactions Section -->
+            <section id="transactions" class="content-section">
+                <div class="section-header">
+                    <h2>Flow Protocol</h2>
+                </div>
+                <div class="transaction-forms">
+                    <div class="trans-card glass">
+                        <h3><i class="fas fa-upload"></i> Issue Book</h3>
+                        <form id="borrow-form">
+                            <div class="form-group">
+                                <label>Member</label>
+                                <select id="borrow-member-select" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Book</label>
+                                <select id="borrow-book-select" required></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Return Date</label>
+                                <input type="date" id="borrow-due-date" required>
+                            </div>
+                            <button type="submit" class="cyber-button full">Execute Issue</button>
+                        </form>
+                    </div>
+                    <div class="trans-card glass">
+                        <h3><i class="fas fa-download"></i> Receive Book</h3>
+                        <div class="form-group">
+                            <label>Quick Return (Type ISBN/Member ID)</label>
+                            <input type="text" id="return-search" placeholder="Scan or type...">
+                        </div>
+                        <div id="return-results"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Categories Section -->
+            <section id="categories" class="content-section">
+                <div class="section-header">
+                    <h2>Taxonomy</h2>
+                    <button class="cyber-button" onclick="app.openModal('category-modal')"><i class="fas fa-folder-plus"></i> New Category</button>
+                </div>
+                <div class="category-grid" id="category-list"></div>
+            </section>
+
+            <!-- Fines Section -->
+            <section id="fines" class="content-section">
+                <div class="section-header">
+                    <h2>Debt Analysis</h2>
+                </div>
+                <div class="table-container glass">
+                    <table id="fines-table">
+                        <thead>
+                            <tr>
+                                <th>Member</th>
+                                <th>Book</th>
+                                <th>Overdue Days</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="fines-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section id="reports" class="content-section">
+                <div class="section-header">
+                    <h2>System Audit</h2>
+                    <button class="cyber-button" onclick="window.print()"><i class="fas fa-print"></i> Generate Print Audit</button>
+                </div>
+                <div class="reports-grid">
+                    <div class="report-card glass">
+                        <h3>Top Circulating Units</h3>
+                        <canvas id="topBooksChart"></canvas>
+                    </div>
+                    <div class="report-card glass">
+                        <h3>Category Distribution</h3>
+                        <canvas id="categoryChartReport"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="content-section">
+                <div class="section-header">
+                    <h2>Core Config</h2>
+                </div>
+                <div class="settings-container glass">
+                    <div class="setting-item">
+                        <label>Fine Rate (per day)</label>
+                        <input type="number" id="setting-fine-rate" step="0.5" value="5">
+                    </div>
+                    <div class="setting-item">
+                        <label>UI Theme</label>
+                        <div class="theme-options">
+                            <button class="theme-opt active" data-theme="dark">Dark Hack</button>
+                            <button class="theme-opt" data-theme="light">Solid State</button>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <label>System Maintenance</label>
+                        <button id="clear-data-btn" class="danger-button">WIPE MEMORY (Clear All Data)</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- About Section -->
+            <section id="about" class="content-section">
+                <div class="glass">
+                    <h2 style="font-weight: 800; margin-bottom: 16px;">SmartLib v1.0.4</h2>
+                    <p style="color: var(--text-slate-500); margin-bottom: 8px;">A professional subsystem for smart library tracking and management.</p>
+                    <p style="color: var(--text-slate-500); margin-bottom: 24px;">Designed for maximum clarity, search efficiency, and modern business aesthetics.</p>
+                    <div style="border-top: 1px solid #f1f5f9; padding-top: 24px;">
+                        <p style="font-size: 0.8rem; font-weight: 700; color: var(--text-slate-400); text-transform: uppercase; margin-bottom: 4px;">Architect</p>
+                        <p style="font-weight: 700; color: var(--text-slate-900);">Kusuma Sri Saranya</p>
+                        <p style="font-size: 0.8rem; font-weight: 700; color: var(--emerald-500); margin-top: 8px;"><i class="fas fa-circle" style="font-size: 0.5rem; vertical-align: middle;"></i> SYSTEM OPERATIONAL</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <!-- Book Modal -->
+    <div id="book-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 id="book-modal-title">REGISTER NEW UNIT</h2>
+            <form id="book-form">
+                <input type="hidden" id="edit-book-id">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" id="book-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Author</label>
+                        <input type="text" id="book-author" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="book-category" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>ISBN</label>
+                        <input type="text" id="book-isbn" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity</label>
+                        <input type="number" id="book-qty" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Cover URL</label>
+                        <input type="url" id="book-cover" placeholder="https://...">
+                    </div>
+                </div>
+                <button type="submit" class="cyber-button full">COMMIT TO DATABASE</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Borrower Modal -->
+    <div id="borrower-modal" class="modal">
+        <div class="modal-content glass">
+            <span class="close-modal">&times;</span>
+            <h2 id="borrower-modal-title">REGISTER ENTITY</h2>
+            <form id="borrower-form">
+                <input type="hidden" id="edit-borrower-id">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="borrower-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="borrower-email" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" id="borrower-phone" required>
+                </div>
+                <div class="form-group">
+                    <label>Member ID</label>
+                    <input type="text" id="borrower-mid" required>
+                </div>
+                <button type="submit" class="cyber-button full">COMMIT TO DATABASE</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Category Modal -->
+    <div id="category-modal" class="modal">
+        <div class="modal-content glass">
+            <span class="close-modal">&times;</span>
+            <h2>DEFINE TAXONOMY</h2>
+            <form id="category-form">
+                <div class="form-group">
+                    <label>Category Name</label>
+                    <input type="text" id="category-name" required>
+                </div>
+                <button type="submit" class="cyber-button full">EXPAND SYSTEM</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container"></div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
